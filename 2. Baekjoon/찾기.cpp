@@ -6,14 +6,14 @@
 using namespace std;
 
 string t,p;
-string ans;
+vector<int> ans; //틀린 이우 string ans라 함
 void input(){
   getline(cin,t);
   getline(cin,p);
 }
 
 vector<int> getPartialMatch(string a){
-  int m=a.size();
+  int m=(int)a.size();
   vector<int> pi(m, 0);
   int match=0;
   for(int i=1;i<m;i++){
@@ -34,7 +34,7 @@ void process(){
       match++;
       if(match==m){
         ans.push_back(i-match+1);
-        match=pi[match];
+        match=pi[match-1];
       }
     }
   }
@@ -48,6 +48,7 @@ void output(){
 int main(){
   input();
   process();
+  
   output();
 
   return 0;
