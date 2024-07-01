@@ -4,7 +4,7 @@ typedef long long ll;
 using namespace std;
 
 ll n;
-vector<ll> a(100005);
+vector<ll> a(200005);
 vector<ll> b(100005);
 vector<ll> pi(100005);
 void input(){
@@ -28,19 +28,18 @@ void getPi(){
 
 void process(){
 ll match=0;
-  for(int i=0;i<n;i++){
+  for(int i=0;i<n;i++) a[i+n]=a[i];
+  for(int i=0;i<2*n;i++){
     while(match>0 && b[match]!=a[i]) match=pi[match-1];
     if(b[match]==a[i]){
       match++;
+      if(match==n) {
+        printf("YES");
+        return;
+      }
     }
   }
-  for(int i=match,j=0;i<n;i++,j++){
-    if(b[i]!=a[j]){
-      printf("NO");
-      return;
-    }
-  }
-  printf("YES");
+  printf("NO");
 }
 
 int main(){
