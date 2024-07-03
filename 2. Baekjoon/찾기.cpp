@@ -5,51 +5,50 @@
 #include <vector>
 using namespace std;
 
-string t,p;
-vector<int> ans; //틀린 이우 string ans라 함
+string A,B;
+vector<int> whereBIsIncluded; //틀린 이우 string ans라 함
 void input(){
-  getline(cin,t);
-  getline(cin,p);
+  getline(cin,A);
+  getline(cin,B);
 }
 
-vector<int> getPartialMatch(string a){
-  int m=(int)a.size();
-  vector<int> pi(m, 0);
-  int match=0;
-  for(int i=1;i<m;i++){
-    while(match>0 && a[match]!=a[i]) match=pi[match-1];
-    if(a[match]==a[i]) pi[i]=++match;
+vector<int> getPartialMatch(string B){
+  int M=(int)B.size(), matched=0;
+  vector<int> pi(M, 0);
+
+  for(int i=1;i<M;i++){
+    while(matched>0 && B[matched]!=B[i]) matched=pi[matched-1];
+
+    if(B[matched]==B[i]) pi[i]=++matched;
   }
   return pi;
 }
 
-void process(){
-  vector<int> pi=getPartialMatch(p);
+void kmp(string A, string B){
+  vector<int> pi=getPartialMatch(B);
 
   int match=0;
-  int n = (int)t.size(), m = (int)p.size();
-  for(int i=0;i<n;i++){
-    while(match>0 && t[i]!=p[match]) match=pi[match-1];
-    if(t[i]==p[match]){
-      match++;
-      if(match==m){
-        ans.push_back(i-match+1);
+  int N = (int)A.size(), M = (int)B.size();
+  for(int i=0;i<N;i++){
+    while(match>0 && A[i]!=B[match])
+      match=pi[match-1];
+
+    if(A[i]==B[match])
+      if(++match==M){
+        whereBIsIncluded.push_back(i-match+1);
         match=pi[match-1];
       }
-    }
   }
 }
 
 void output(){
-  printf("%d\n",ans.size());
-  for(auto a:ans) printf("%d ",a+1);
+  printf("%d\n",whereBIsIncluded.size());
+  for(auto a:whereBIsIncluded) printf("%d ",a+1);
 }
 
 int main(){
   input();
-  process();
-  
+  kmp(A,B);
   output();
-
   return 0;
 }
