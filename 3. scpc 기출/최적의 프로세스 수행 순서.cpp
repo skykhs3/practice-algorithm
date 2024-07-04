@@ -2,89 +2,61 @@
 using namespace std;
 
 int oo = 9999999;
+vector<int> getPartialMatch(string &B){
+  int M=(int)B.size(), matched=0;
+  vector<int> pi(M, 0);
 
-vector<int> Z(string a)
-{
-  vector<int> z(a.size());
-  int n = a.size();
-  z[0] = n;
-  int l = 0, r = 0;
-  for (int i = 1; i < n; i++)
-  {
-    if (i <= r)
-      z[i] = min(z[i - l], r - i);
-    while (a[i + z[i]] == a[z[i]] && i + z[i] < n)
-      z[i]++;
-    if (i > r)
-      l = i;
-    r = max(r, i + z[i] - 1);
+  for(int i=1;i<M;i++){
+    while(matched>0 && B[matched]!=B[i]) matched=pi[matched-1];
+    if(B[matched]==B[i]) pi[i]=++matched;
   }
-  return z;
+  return pi;
 }
 
-int getMinValue(vector<int> &seg, int nn, int x)
-{
-  x += nn - 1;
-  int mn = oo;
-  while (1)
-  {
-    mn = min(mn, seg[x]);
-    if (x == 0)
-      break;
-    x = (x - 1) / 2;
-  }
-  return mn;
-}
+void kmp(string &A, string &B){
+  vector<int> pi=getPartialMatch(B);
 
-void update(int l, int r, int x, int y, int v, int value, vector<int> &seg)
-{
-  if(l>r) return ;
-  if(r<x || y<l) return;
-  if (x <= l && r <= y)
-  {
-      seg[v] = min(seg[v], value);
-      return;
+  int matched=0;
+  int N = (int)A.size(), M = (int)B.size();
+  for(int i=0;i<N;i++){
+    while(matched>0 && A[i]!=B[matched])
+      matched=pi[matched-1];
+    if(A[i]==B[matched]){
+    ++matched;
+      if(matched==M){
+        whereBIsIncluded.push_back(i-matched+1);
+        matched=pi[matched-1];
+      }
+    }
   }
-  int mid = (l + r) / 2;
-  update(l, mid, x, y, 2 * v + 1, value, seg);
-  update(mid + 1, r, x, y, 2 * v + 2, value, seg);
 }
-
 
 void solve()
 {
   string R, P;
-  cin >> R;
-  cin >> P;
-  string A = P + "@" + R;
-  vector<int> z = Z(A);
-  vector<int> dp(A.size() + 10, oo);
-  
-  int nn = 1;
-  while (nn < A.size())
-    nn *= 2;
-  vector<int> seg(2*nn+10, oo); 
+  cin>>R;
+  cin>>P;
+  auto prev=kmp(R,P);
+// for(int i=0;i<prev.size();i++) printf("%d ",prev[i]);
+// printf("\n");
 
-  update(0, nn-1, P.size()+1, P.size()+z[P.size()+1], 0, 1, seg);
-
-  for (int i = P.size()+1; i < A.size()-1; i++)
-  {
-    dp[i] = getMinValue(seg, nn, i);
-    update(0, nn-1, i+1, i+z[i+1], 0, dp[i]+1, seg);
+  vector<int> dp(R.size(),oo);
+  for(int i=0;i<R.size();i++){
+    if(i-prev[i]<0) dp[i]=1;
+    else dp[i]=min(dp[i-prev[i]]+1,dp[i]);
   }
-
-  dp[A.size()-1]=getMinValue(seg,nn,A.size()-1);
-  if(dp[A.size()-1]==oo) printf("-1\n");
-  else printf("%d\n",dp[A.size()-1]);
+  if(dp[R.size()-1]==oo) printf("-1\n");
+  else printf("%d\n",dp[R.size()-1]);
 }
 
 int main()
 {
+ 
   int T;
-  scanf("%d", &T);
+  cin>>T;
   for (int i = 0; i < T; i++)
   {
-    printf("Case #%d\n", i + 1);
+    cout<< "Case #" << i + 1<<"\n";
     solve();
   }
 }
