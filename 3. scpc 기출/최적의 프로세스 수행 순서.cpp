@@ -2,21 +2,22 @@
 using namespace std;
 
 int oo = 9999999;
+char r[250010*2];
+char p[250010*2];
+vector<int> z(250010*2);
+vector<int> dp(250010*2, oo);
+vector<int> seg(524288*2+10, oo); 
 
-vector<int> Z(string a)
+vector<int> Z(string a, vector<int> &z)
 {
-  vector<int> z(a.size());
   int n = a.size();
   z[0] = n;
   int l = 0, r = 0;
   for (int i = 1; i < n; i++)
   {
-    if (i <= r)
-      z[i] = min(z[i - l], r - i);
-    while (a[i + z[i]] == a[z[i]] && i + z[i] < n)
-      z[i]++;
-    if (i > r)
-      l = i;
+    if (i <= r) z[i] = min(z[i - l], r - i);
+    for(;a[i + z[i]] == a[z[i]];)z[i]++;
+    if(i > r) l = i;
     r = max(r, i + z[i] - 1);
   }
   return z;
@@ -53,17 +54,22 @@ void update(int l, int r, int x, int y, int v, int value, vector<int> &seg)
 
 void solve()
 {
+  scanf("%s %s",&r,&p);
   string R, P;
-  cin >> R;
-  cin >> P;
+  R=r;
+  P=p;
   string A = P + "@" + R;
-  vector<int> z = Z(A);
-  vector<int> dp(A.size() + 10, oo);
+
+  for(int i=0;i<A.size()+5;i++) dp[i]=oo,z[i]=0;
   
+  Z(A,z);
+
   int nn = 1;
   while (nn < A.size())
     nn *= 2;
-  vector<int> seg(2*nn+10, oo); 
+
+  for(int i=0;i<2*nn+10;i++) seg[i]=oo;
+
 
   update(0, nn-1, P.size()+1, P.size()+z[P.size()+1], 0, 1, seg);
 
@@ -74,17 +80,18 @@ void solve()
   }
 
   dp[A.size()-1]=getMinValue(seg,nn,A.size()-1);
-  if(dp[A.size()-1]==oo) printf("-1\n");
-  else printf("%d\n",dp[A.size()-1]);
+  if(dp[A.size()-1]==oo) cout<<-1<<endl;
+  else cout<<dp[A.size()-1]<<endl;
 }
 
 int main()
 {
+ 
   int T;
-  scanf("%d", &T);
+  cin>>T;
   for (int i = 0; i < T; i++)
   {
-    printf("Case #%d\n", i + 1);
+    cout<< "Case #" << i + 1<<"\n";
     solve();
   }
 }
