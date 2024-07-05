@@ -13,22 +13,25 @@ vector<int> getPartialMatch(string &B){
   return pi;
 }
 
-void kmp(string &A, string &B){
-  vector<int> pi=getPartialMatch(B);
-
-  int matched=0;
+vector<int> kmp(string &A, string &B){
+  int match=0;
   int N = (int)A.size(), M = (int)B.size();
+  vector<int> pi=getPartialMatch(B);
+  vector<int> prev(N);
+
   for(int i=0;i<N;i++){
-    while(matched>0 && A[i]!=B[matched])
-      matched=pi[matched-1];
-    if(A[i]==B[matched]){
-    ++matched;
-      if(matched==M){
-        whereBIsIncluded.push_back(i-matched+1);
-        matched=pi[matched-1];
+    while(match>0 && A[i]!=B[match])
+      match=pi[match-1];
+    if(A[i]==B[match]){
+        match++;
+        prev[i]=match;
+      if(match==M){
+        match=pi[match-1];
       }
+      
     }
   }
+  return prev;
 }
 
 void solve()
@@ -37,8 +40,6 @@ void solve()
   cin>>R;
   cin>>P;
   auto prev=kmp(R,P);
-// for(int i=0;i<prev.size();i++) printf("%d ",prev[i]);
-// printf("\n");
 
   vector<int> dp(R.size(),oo);
   for(int i=0;i<R.size();i++){
@@ -51,7 +52,9 @@ void solve()
 
 int main()
 {
- 
+  freopen("output.txt","w",stdout);
+  printf("A");
+  return 0;
   int T;
   cin>>T;
   for (int i = 0; i < T; i++)
