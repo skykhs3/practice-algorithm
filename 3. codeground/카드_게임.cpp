@@ -21,64 +21,59 @@ void update(int y, int x, vector<vector<int>>& sumAB, int aij) {
     sumAB[y][x] += (x > 0) ? sumAB[y][x - 1] : 0;
     sumAB[y][x] -= (y > 0 && x > 0) ? sumAB[y - 1][x - 1] : 0;
 }
-
+vector<vector<int>> sumAB(3000+1,vector<int>(3000+1));
 
 void solution() {
     int n, k;
     scanf("%d%d",&n,&k);
     vector<int> a(n + 1), b(n + 1);
-    vector<int> sumA(n + 1), sumB(n + 1);
-    vector<vector<int>> sumAB(n + 1, vector<int>(n + 1, 0));
-    vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
-    vector<int> la(n + 1), lb(n + 1);
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1));
+    vector<int> sxY(n+1,1);
+    vector<int> sumOfDeckY(n+1);
+    vector<int> sumOfDpY(n+1);
     
-    for (int i = 1; i <= n; i++) scanf("%d",&a[i]);
-    for (int i = 1; i <= n; i++){
-      scanf("%d",&b[i]);
-      sumA[i] = sumA[i - 1] + a[i];
-      sumB[i] = sumB[i - 1] + b[i];
-    }
-
-    int left = 0, right = 0, cur = 0;
-    while (right <= n) {
-        if (cur + a[right] <= k) {
-            cur += a[right];
-            la[right] = max(0, left - 1);
-            right++;
-        } else {
-            cur -= a[left];
-            left++;
-        }
-    }
-
-    left = 0, right = 0, cur = 0;
-    while (right <= n) {
-        if (cur + b[right] <= k) {
-            cur += b[right];
-            lb[right] = max(0, left - 1);
-            right++;
-        } else {
-            cur -= b[left];
-            left++;
-        }
-    }
+    for(int i=1;i<=n;i++) scanf("%d",&a[i]);
+    for(int i=1;i<=n;i++) scanf("%d",&b[i]);
 
     int ans = 0;
+    for(int i=1;i<=n;i++){
+      for(int j=1;j<=n;j++){
+        sumAB[i][j]=sumAB[i-1][j]+sumAB[i][j-1]-sumAB[i-1][j-1];
+      }
+    }
 
     for (int i = 0; i <= n; i++) {
+        int sumOfDeckX=0,sx=1,sumOfDpX=0; // 0의 갯수.
         for (int j = 0; j <= n; j++) {
-            if (i == 0 && j == 0) {
-                dp[i][j] = 1;
-            } else {
-                if (getAB(la[i], j, i - 1, j, sumAB) != (i - la[i]) || getAB(i, lb[j], i, j - 1, sumAB) != (j - lb[j])) {
-                    dp[i][j] = 1;
-                }
+          if(i==0 && j==0) dp[i][j]=1;
+          else{
+            if(j!=0){
+              sumOfDeckX+=b[j];
+              sumOfDpX+=1-dp[i][j-1];
+              while(sumOfDeckX>k){
+                sumOfDeckX-=b[sx];
+                sumOfDpX-=1-dp[i][sx-1];
+                sx++;
+              }
             }
-            update(i, j, sumAB, dp[i][j]);
-            if(dp[i][j]) ans++;
+            if(i!=0){
+              sumOfDeckY[j]+=a[i];
+              sumOfDpY[j]+=1-dp[i-1][j];
+              while(sumOfDeckY[j]>k){
+                sumOfDeckY[j]-=a[sxY[j]];
+                sumOfDpY[j]-=1-dp[sxY[j]-1][j];
+                sxY[j]++;
+              }
+            }
+            if(sumOfDpY[j]!=0 || sumOfDpX!=0) dp[i][j]=1;
+          }
         }
     }
 
+    for(int i=0;i<=n;i++){
+      for(int j=0;j<=n;j++)
+        if(dp[i][j]) ans++;
+    }
     printf("%d %d\n",ans,(n + 1) * (n + 1) - ans );
 }
 
