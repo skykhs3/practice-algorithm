@@ -34,7 +34,7 @@ vector<int> kmp(string &A, string &B){
   return prev;
 }
 
-void solve()
+void solution()
 {
   string R, P;
   cin>>R;
@@ -60,6 +60,6 @@ int main()
   for (int i = 0; i < T; i++)
   {
     cout<< "Case #" << i + 1<<"\n";
-    solve();
+    solution();
   }
 }

@@ -12,7 +12,7 @@ void dfs(ll v,vector<bool> &visited,vector<vector<ll>> &V,vector<ll> &st){
     if(!visited[to]) dfs(to,visited,V,st);
   }
 }
-void solve(){
+void solution(){
   ll n;
 
   scanf("%lld",&n);
@@ -41,6 +41,6 @@ int main(){
   scanf("%lld",&T);
   for(ll i=1;i<=T;i++){
     printf("Case #%lld\n",i);
-    solve();
+    solution();
   }
 }

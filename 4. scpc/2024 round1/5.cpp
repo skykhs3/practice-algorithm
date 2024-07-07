@@ -3,57 +3,53 @@
 #define Limit 50000
 typedef long long ll;
 using namespace std;
-ll k;
+ll k; // bucket size
 
 struct Query{
   ll s,e,index,ans;
 };
 
-bool comp(Query& lef,Query& rig){
+bool compareByBucket(Query& lef,Query& rig){
   return (lef.s-1)/k<(rig.s-1)/k || ( (lef.s-1)/k==(rig.s-1)/k&& lef.e<rig.e );
 }
 
-bool cmp(Query& lef,Query& rig){
+bool compareByIndex(Query& lef,Query& rig){
   return lef.index<rig.index;
 }
 
-void mi(ll num, ll &currentSqCnt,vector<ll> &count){
+void updateWhenErase(ll num, ll &currentSqCnt,vector<ll> &count){
   if(num==1) return;
   ll cur=num;
-  vector<ll> temps;
+  vector<ll> history;
   while(1){
     if(cur>Limit || count[cur]>0){
       if(cur<=Limit) count[cur]--;
-      for(auto temp:temps){
-        count[temp]=temp-1;
-      }
-      currentSqCnt-=temps.size();
+      for(auto temp:history)count[temp]=temp-1;
+      currentSqCnt-=history.size();
       break;
     }
-    temps.push_back(cur);
+    history.push_back(cur);
     cur=cur*cur;
   }
 }
 
-void pl(ll num, ll &currentSqCnt,vector<ll> &count){
+void updateWhenInsert(ll num, ll &currentSqCnt,vector<ll> &count){
   if(num==1) return;
   ll cur=num;
-  vector<ll> temps;
+  vector<ll> history;
   while(1){
     if(cur>Limit || count[cur]+1<cur){
       if(cur<=Limit) count[cur]++;
-      for(auto temp:temps){
-        count[temp]=0;
-      }
-      currentSqCnt+=temps.size();
+      for(auto temp:history) count[temp]=0;
+      currentSqCnt+=history.size();
       break;
     }
-    temps.push_back(cur);
+    history.push_back(cur);
     cur=cur*cur;
   }
 }
 
-void solve(){
+void solution(){
   int n;
   scanf("%lld",&n);
   vector<ll> a(n+1);
@@ -69,9 +65,10 @@ void solve(){
     scanf("%lld%lld",&queries[i].s,&queries[i].e);
     queries[i].index=i;
   }
-  for(k=1;k*k<n;k++);
 
-  sort(queries.begin(),queries.end(),comp);
+  for(k=1;k*k<n;k++); //find bucket size
+
+  sort(queries.begin(),queries.end(),compareByBucket); // sort
 
   vector<ll> count(Limit+10);
   for(ll i=queries[0].s;i<=queries[0].e;i++){
@@ -91,14 +88,14 @@ void solve(){
 
   for(int i=1;i<queries.size();i++){
     auto query=queries[i];
-    while(s<query.s) mi(a[s],currentSqCnt,count),s++;
-    while(s>query.s) pl(a[s-1],currentSqCnt,count),s--;
-    while(e>query.e) mi(a[e],currentSqCnt,count),e--;
-    while(e<query.e) pl(a[e+1],currentSqCnt,count),e++;
+    while(s<query.s) updateWhenErase(a[s],currentSqCnt,count),s++;
+    while(s>query.s) updateWhenInsert(a[s-1],currentSqCnt,count),s--;
+    while(e>query.e) updateWhenErase(a[e],currentSqCnt,count),e--;
+    while(e<query.e) updateWhenInsert(a[e+1],currentSqCnt,count),e++;
     queries[i].ans=currentSqCnt;
   }
 
-  sort(queries.begin(),queries.end(),cmp);
+  sort(queries.begin(),queries.end(),compareByIndex);
   for(auto query:queries) printf("%lld\n",query.ans);
   
 }
@@ -108,7 +105,7 @@ int main(){
   scanf("%lld",&T);
   for(ll i=1;i<=T;i++){
     printf("Case #%lld\n",i);
-    solve();
+    solution();
   }
   return 0;
 }

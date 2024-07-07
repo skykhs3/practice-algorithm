@@ -3,7 +3,7 @@ typedef long long ll;
 using namespace std;
 
 ll oo=999999999999LL;
-void solve(){
+void solution(){
   ll n,a,b;
   scanf("%lld %lld %lld",&n,&a,&b);
   vector<ll> dp(n+10,-oo);
@@ -19,7 +19,7 @@ int main(){
   scanf("%lld",&t);
   for(ll i=0;i<t;i++){
     printf("Case #%lld\n",i+1);
-    solve();
+    solution();
   }
   return 0;
 }

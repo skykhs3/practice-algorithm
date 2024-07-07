@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-ll oo=9999999999LL;
-void solve(){
+void solution(){
   ll i,ans=0,n;
   scanf("%lld",&n);
   vector<ll> a(n);
@@ -23,6 +22,6 @@ int main(){
   scanf("%lld",&T);
   for(ll i=1;i<=T;i++){
     printf("Case #%lld\n",i);
-    solve();
+    solution();
   }
 }
