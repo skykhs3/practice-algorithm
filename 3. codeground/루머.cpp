@@ -16,16 +16,24 @@ void getLefRig(vector<int>& lef, vector<int>& rig, vector<int>& a, int n, int t)
   }
 }
 
-int canErase2(int k,int i,int t,vector<int>& a, vector<int>& lef,vector<int>& rig){
-  if(rig[k]+2==lef[i] && rig[k]<k+t && lef[i]>i-t && a[rig[k]+1]==2) return 1;
+int canErase2(int k,int t,vector<int>& a, vector<int>& lef,vector<int>& rig){
+  if(rig[k]<k+t && a[rig[k]+1]==2) return 1;
   return 0;
 }
+
+struct Value{
+  int rig;
+  int dpVal;
+};
 
 void solve(){
   int n;
   scanf("%d",&n);
   vector<int> a(n+5),lef(n+5),rig(n+5);
   vector<vector<int>> dp(n+5,vector<int>(n+5,-oo));
+  vector<vector<Value>> maxDp(n+5);
+  vector<int> s(n+5,-1);
+  vector<int> mx(n+5,-oo);
 
   for(int i=1;i<=n;i++) scanf("%d",&a[i]);
   int s0,t;
@@ -35,17 +43,24 @@ void solve(){
 
   for(int i=1;i<=n;i++){
     dp[i][0]=0;
-    dp[i][1]=rig[i]-lef[i]+1;
-    for(int j=2;j<=s0 && j<=i;j++){
-      for(int k=1;k<i;k++){
-        if(rig[k]<lef[i]){
-          dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-lef[i]+1+canErase2(k,i,t,a,lef,rig));
-        }
-        else{
-          dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-rig[k]);
+    
+    for(int j=1;j<=s0 && j<=i;j++){
+      if(j==1){
+        dp[i][1]=rig[i]-lef[i]+1;
+      }
+      else{
+        for(int k=1;k<i;k++){
+          if(rig[k]+2<lef[i]){
+            dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-lef[i]+1);
+          }
+          else if(rig[k]+2==lef[i]){
+            dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-lef[i]+1+canErase2(k,t,a,lef,rig)*(lef[i]>i-t?1:0));
+          }
+          else{
+            dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-rig[k]);
+          }
         }
       }
-     // printf("A");
     }
   }
   int ans=-oo;
