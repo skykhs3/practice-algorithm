@@ -63,21 +63,17 @@ void solve(){
           if(canErase2(s2[j],t,a,lef,rig))
             mxDp2[j]=max(mxDp2[j],dp[s2[j]][j-1]+1);
         }
-        for(int k=1;k<i;k++){
-          // if(rig[k]+2<lef[i]){
-          //   dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-lef[i]+1);
-          // }
-          // else if(rig[k]+2==lef[i]){
-          //   dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-lef[i]+1+canErase2(k,t,a,lef,rig)*(lef[i]>i-t?1:0));
-          // }
+        for(int k=i-1;k>=1;k--){
           if(rig[k]+2>lef[i]){
             dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-rig[k]);
+          }
+          else{
+            break;
           }
         }
       }
       dp[i][j]=max(dp[i][j],mxDp[j]+rig[i]-lef[i]+1);
       if(lef[i]>i-t) dp[i][j]=max(dp[i][j],mxDp2[j]+rig[i]-lef[i]+1);
-      //printf("%d %d %d-> %d/%d %d/%d\n",i,j,dp[i][j],mxDp[j],s[j],mxDp2[j],s2[j]);
     }
   }
   int ans=-oo;
