@@ -38,8 +38,8 @@ void solve(){
 
   getLefRig(lef,rig,a,n,t);
 
-  vector<int> s(n+5,-1),mxDp(n+5,-oo);
-  vector<int> s2(n+5,-1),mxDp2(n+5,-oo);
+  vector<int> sInCase1(n+5,0),mxDpInCase1(n+5,-oo);
+  vector<int> sInCase2(n+5,0),mxDpInCase2(n+5,-oo);
 
   for(int i=1;i<=n;i++){
     dp[i][0]=0;
@@ -49,36 +49,32 @@ void solve(){
         dp[i][1]=rig[i]-lef[i]+1;
       }
       else{
-        while(s[j]+1<i && rig[s[j]+1]+2<=lef[i]){
-          s[j]++;
-          mxDp[j]=max(mxDp[j],dp[s[j]][j-1]);
+        while(sInCase1[j]+1<i && rig[sInCase1[j]+1]+2<=lef[i]){
+          sInCase1[j]++;
+          mxDpInCase1[j]=max(mxDpInCase1[j],dp[sInCase1[j]][j-1]);
         }
 
-        while(s2[j]+1<i && rig[s2[j]+1]+2<lef[i]){
-          s2[j]++;
-          mxDp2[j]=-oo;
+        while(sInCase2[j]+1<i && rig[sInCase2[j]+1]+2<lef[i]) sInCase2[j]++;
+        if(sInCase2[j]==0 || rig[sInCase2[j]]+2!=lef[i]) mxDpInCase2[j]=-oo;
+        while(sInCase2[j]+1<i && rig[sInCase2[j]+1]+2==lef[i]){
+          sInCase2[j]++;
+          if(canErase2(sInCase2[j],t,a,lef,rig))
+            mxDpInCase2[j]=max(mxDpInCase2[j],dp[sInCase2[j]][j-1]+1);
         }
-        while(s2[j]+1<i && rig[s2[j]+1]+2==lef[i]){
-          s2[j]++;
-          if(canErase2(s2[j],t,a,lef,rig))
-            mxDp2[j]=max(mxDp2[j],dp[s2[j]][j-1]+1);
+
+        for(int k=i-1;k>=1;k--){ // 최약이 O(n) 인데 빠르게 작동하는 이유를 모르겠음.
+          if(rig[k]+2>lef[i]) dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-rig[k]);
+          else break;
         }
-        for(int k=i-1;k>=1;k--){
-          if(rig[k]+2>lef[i]){
-            dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-rig[k]);
-          }
-          else{
-            break;
-          }
-        }
+
+        dp[i][j]=max(dp[i][j],mxDpInCase1[j]+rig[i]-lef[i]+1);
+        if(lef[i]>i-t) dp[i][j]=max(dp[i][j],mxDpInCase2[j]+rig[i]-lef[i]+1);
       }
-      dp[i][j]=max(dp[i][j],mxDp[j]+rig[i]-lef[i]+1);
-      if(lef[i]>i-t) dp[i][j]=max(dp[i][j],mxDp2[j]+rig[i]-lef[i]+1);
     }
   }
+
   int ans=-oo;
   for(int i=1;i<=n;i++) ans=max(ans,dp[i][s0]);
-
 
   printf("%d\n",ans);
 }
