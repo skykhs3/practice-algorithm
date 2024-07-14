@@ -62,7 +62,7 @@ void solve(){
             mxDpInCase2[j]=max(mxDpInCase2[j],dp[sInCase2[j]][j-1]+1);
         }
 
-        for(int k=i-1;k>=1;k--){ // 최약이 O(n) 인데 빠르게 작동하는 이유를 모르겠음.
+        for(int k=i-1;k>=1;k--){ // 최악이 O(n) 인데 통과하는 이유를 모르겠음.
           if(rig[k]+2>lef[i]) dp[i][j]=max(dp[i][j],dp[k][j-1]+rig[i]-rig[k]);
           else break;
         }
