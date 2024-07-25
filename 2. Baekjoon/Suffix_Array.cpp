@@ -1,18 +1,22 @@
 #include <bits/stdc++.h>
 using namespace std;
+const int MAX_VALUE_TO_HANDLE_ASCII = 300;
+
 struct Comparator {
   const vector<int> &group;
   int t;
   Comparator(const vector<int> &_group, int _t): group(_group),t(_t) {};
   bool operator () (int indexA, int indexB){ // Allows this object to be used as a function
     if(group[indexA]!=group[indexB]) return group[indexA] < group[indexB];
-    return group[indexA+t]<group[indexB+t]; // Since group[indexA] == group[indexB], at least t characters overlap from the start -> the lengths of s[indexA..] and s[indexB..] are at least t. Therefore, indexA+t <= n && indexB+t <= n. To access up to index n, set group[n] = -1.
+    return group[indexA+t]<group[indexB+t]; // Since group[indexA] == group[indexB], there is at least an overlap of t characters from the start.
+    // Thus, the lengths of s[indexA..] and s[indexB..] are at least t. In other words, indexA + t <= n and indexB + t <= n.
+    // To handle the case where the index is n, set group[n] = -1.
   }
 };
 
 void  countingSort(vector<int> &suffixArray, vector<int> &group, int t){
   int n=suffixArray.size();
-  int sum,maxi=max(300,n+1); // group can range from 0 to n. Consider the array bounds carefully.
+  int sum,maxi=max(MAX_VALUE_TO_HANDLE_ASCII,n+1); // group can range from 0 to n. Consider the array bounds carefully.
   vector<int> c(maxi);
   for(int i=0;i<n;i++) c[i+t<n?group[i+t]:0]++;
   for(int i=1;i<maxi;i++) c[i]+=c[i-1];
@@ -30,7 +34,7 @@ vector<int> getSuffixArray(const string &s){
   group[n]=0;
   while(t<n){
     Comparator compareUsing2T(group,t);
-    // Choose between O(NlogN) std sort and O(N) counting sort.
+    // Choose between O(NlogN) quick sort and O(N) counting sort.
     // sort(suffixArray.begin(),suffixArray.end(),compareUsing2T);
     countingSort(suffixArray,group,t); countingSort(suffixArray,group,0);
 
@@ -52,7 +56,7 @@ vector<int> getSuffixArray(const string &s){
   return suffixArray;
 }
 
-vector<int> getLCPArray(string s, vector<int> &suffixArray){
+vector<int> getLcpArray(string s, vector<int> &suffixArray){
   int n=s.size();
   vector<int> iSA(n);
   vector<int> LCP(n);
@@ -71,12 +75,13 @@ vector<int> getLCPArray(string s, vector<int> &suffixArray){
 int main(){
   string s;
   cin>>s;
+
   auto suffixArray=getSuffixArray(s);
   for(auto index:suffixArray)cout<<index+1<< " ";
   cout <<endl;
   
-  auto LCPArray=getLCPArray(s, suffixArray);
-  for(int i=0;i<LCPArray.size();i++)
+  auto lcpArray=getLcpArray(s, suffixArray);
+  for(int i=0;i<lcpArray.size();i++)
     if(i==0) cout<<"x ";
-    else cout<<LCPArray[i]<<" ";
+    else cout<<lcpArray[i]<<" ";
 }
