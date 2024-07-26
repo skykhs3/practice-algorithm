@@ -16,7 +16,10 @@ struct TrieNode{
   long long output=0;
   TrieNode() : children(ALPHABET,nullptr), terminal(-1), fail(nullptr){};
   ~TrieNode() {
-  }
+    for(int i=0;i<children.size();i++){
+      if(children[i]) delete children[i];
+    }
+  };
 
   void insert(int key, string &s, int id){
     if(key>=s.size()) terminal = id;
@@ -78,7 +81,7 @@ void solve(){
   cin>>marker;
   cin>>dna;
   for(int i=0;i<=M-2;i++){
-    for(int j=i+1;j<M;j++){
+    for(int j=i;j<M;j++){
       reverse(dna.begin()+i,dna.begin()+j+1);
       root->insert(0,dna,i*M+j);
       reverse(dna.begin()+i,dna.begin()+j+1);
