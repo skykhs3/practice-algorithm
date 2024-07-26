@@ -1,21 +1,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int ALPHABET =26;
+const int ALPHABET = 126;
 int toNumber(char chr){
-  return chr-'a';
+  return (int)chr;
 }
 
 struct TrieNode{
   vector<TrieNode*> children;
   int terminal;
   TrieNode* fail;
-  vector<int> output; // 해당 위치에서 접미사가 되는 바늘 문자열의 인덱스들.
+  vector<int> output;
   TrieNode() : children(ALPHABET,nullptr), terminal(-1), fail(nullptr){};
   ~TrieNode() {
     for(int i=0;i<children.size();i++)
       delete children[i];
-  }
+  };
 
   void insert(int key, string &s, int id){
     if(key>=s.size()) terminal = id;
@@ -48,47 +48,72 @@ void computeFailFunc(TrieNode *root){
         child->fail=t;
       }
       child->output = child->fail->output;
-      if(child->terminal !=-1)
+      if(child->terminal != -1)
         child->output.push_back(child->terminal);
       q.push(child);
     }
   }
 }
 
-void ahoCorasick(string &s, TrieNode *root){
+long long ahoCorasick(string &s, TrieNode *root, vector<string> &emo){
   vector<pair<int,int>> ret;
   TrieNode *state=root;
+  long long ans=0;
+  int mx=-1;
   for(int i=0;i<s.size();i++){
     int chr= toNumber(s[i]);
     while(state!=root && state->children[chr]==nullptr)
       state=state->fail;
     if(state->children[chr]) state=state->children[chr];
-    for(int j=0;j<state->output.size();j++){
-      cout<<"YES";
-      return;
+    bool flag=false;
+    for(auto index: state->output){
+      int sz=emo[index].size();
+      if(mx + emo[index].size()< i+1){
+        flag=true;
+        break;
+      }
+    }
+    if(flag){
+      mx=i;
+      ans++;
     }
   }
-  cout<<"NO";
+  return ans;
 }
 
-int main(){
-  int N;
-  cin>>N;
-  vector<string> input(N);
+
+void solve(){
+  int N,M;
+  string dna;
+  string marker;
   TrieNode *root = new TrieNode();
+  cin>>N>>M;
+  if(N==0 || M==0) exit(0);
+  vector<string> emo(N);
   for(int i=0;i<N;i++){
-    cin>>input[i];
-    root->insert(0,input[i],i);
+    cin>>emo[i];
+    root->insert(0,emo[i],i);
   }
+
   computeFailFunc(root);
 
-  int Q;
-  string s;
-  cin>>Q;
-  for(int i=0;i<Q;i++){
-    cin>>s;
-    ahoCorasick(s,root);
-    cout<<endl;
+  cin.ignore();
+  long long ans=0;
+  for(int i=0;i<M;i++){
+    string marker;
+    getline(cin,marker);
+    ans+=ahoCorasick(marker,root,emo);
+  }
+  cout<<ans<<endl;
+  
+  delete root;
+}
+int main(){
+  // ios::sync_with_stdio(false); // I/O 성능 최적화
+  // cin.tie(NULL); // I/O 성능 최적화
+
+  for(;;){
+    solve();
   }
   return 0;
 }
