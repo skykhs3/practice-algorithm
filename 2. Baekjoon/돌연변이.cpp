@@ -17,7 +17,10 @@ struct TrieNode{
   TrieNode() : children(ALPHABET,nullptr), terminal(-1), fail(nullptr){};
   ~TrieNode() {
     for(int i=0;i<children.size();i++){
-      if(children[i]) delete children[i];
+      if(children[i]!=nullptr){
+        delete children[i];
+        children[i]=nullptr;
+      }
     }
   };
 
@@ -92,6 +95,9 @@ void solve(){
   delete root;
 }
 int main(){
+  ios::sync_with_stdio(false); // I/O 성능 최적화
+  cin.tie(0); // I/O 성능 최적화
+
   int T;
   cin>>T;
   for(int i=1;i<=T;i++){
