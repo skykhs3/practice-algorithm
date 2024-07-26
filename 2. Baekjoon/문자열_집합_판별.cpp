@@ -12,7 +12,10 @@ struct TrieNode{
   TrieNode* fail;
   vector<int> output;
   TrieNode() : children(ALPHABET,nullptr), terminal(-1), fail(nullptr){};
-  ~TrieNode() {}
+  ~TrieNode() {
+    for(int i=0;i<children.size();i++)
+      delete children[i];
+  }
 
   void insert(int key, string &s, int id){
     if(key>=s.size()) terminal = id;
