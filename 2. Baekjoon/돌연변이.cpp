@@ -1,18 +1,22 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int ALPHABET =26;
+const int ALPHABET =4;
 int toNumber(char chr){
-  return chr-'a';
+  if(chr=='A') return 0;
+  else if(chr=='C') return 1;
+  else if(chr=='G') return 2;
+  else return 3;
 }
 
 struct TrieNode{
   vector<TrieNode*> children;
   int terminal;
   TrieNode* fail;
-  vector<int> output;
+  long long output=0;
   TrieNode() : children(ALPHABET,nullptr), terminal(-1), fail(nullptr){};
-  ~TrieNode() {}
+  ~TrieNode() {
+  }
 
   void insert(int key, string &s, int id){
     if(key>=s.size()) terminal = id;
@@ -46,7 +50,7 @@ void computeFailFunc(TrieNode *root){
       }
       child->output = child->fail->output;
       if(child->terminal !=-1)
-        child->output.push_back(child->terminal);
+        child->output++;
       q.push(child);
     }
   }
@@ -55,37 +59,40 @@ void computeFailFunc(TrieNode *root){
 void ahoCorasick(string &s, TrieNode *root){
   vector<pair<int,int>> ret;
   TrieNode *state=root;
+  long long ans=0;
   for(int i=0;i<s.size();i++){
     int chr= toNumber(s[i]);
     while(state!=root && state->children[chr]==nullptr)
       state=state->fail;
     if(state->children[chr]) state=state->children[chr];
-    for(int j=0;j<state->output.size();j++){
-      cout<<"YES";
-      return;
+    ans+=state->output;
+  }
+  cout<<ans<<endl;
+}
+void solve(){
+  int N,M;
+  string dna;
+  string marker;
+  TrieNode *root = new TrieNode();
+  cin>>N>>M;
+  cin>>marker;
+  cin>>dna;
+  for(int i=0;i<=M-2;i++){
+    for(int j=i+1;j<M;j++){
+      reverse(dna.begin()+i,dna.begin()+j+1);
+      root->insert(0,dna,i*M+j);
+      reverse(dna.begin()+i,dna.begin()+j+1);
     }
   }
-  cout<<"NO";
-}
-
-int main(){
-  int N;
-  cin>>N;
-  vector<string> input(N);
-  TrieNode *root = new TrieNode();
-  for(int i=0;i<N;i++){
-    cin>>input[i];
-    root->insert(0,input[i],i);
-  }
   computeFailFunc(root);
-
-  int Q;
-  string s;
-  cin>>Q;
-  for(int i=0;i<Q;i++){
-    cin>>s;
-    ahoCorasick(s,root);
-    cout<<endl;
+  ahoCorasick(marker,root);
+  delete root;
+}
+int main(){
+  int T;
+  cin>>T;
+  for(int i=1;i<=T;i++){
+    solve();
   }
   return 0;
 }
