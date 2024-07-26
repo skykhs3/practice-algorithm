@@ -15,7 +15,6 @@ struct TrieNode{
   ~TrieNode() {
     for(int i=0;i<ALPHABET;i++)
       if(children[i]) delete children[i];
-      if(fail) delete fail;
   }
 
   void insert(int key, string &s, int id){
@@ -91,5 +90,6 @@ int main(){
     ahoCorasick(s,root);
     cout<<endl;
   }
+  delete root;
   return 0;
 }
