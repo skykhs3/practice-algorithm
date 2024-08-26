@@ -6,7 +6,7 @@ ll f(ll b,ll a,ll dp){
 }
 // 틀린 이유를 찾아야해.
 
-ll oo=1000000000000000000LL;
+ll oo=100000LL;
 void solve(){
   freopen("input1.txt","r",stdin);
   ll n;
@@ -25,17 +25,21 @@ void solve(){
   dp[1]=0;
 
   for(ll i=2;i<=n;i++){
-  //  while(s<t && f(b[deq[s]],a[i],dp[deq[s]])>=f(b[deq[s+1]],a[i],dp[deq[s+1]])) s++;
-    for(ll j=1;j<=t;j++) dp[i]=min(dp[i],f(b[deq[j]],a[i],dp[deq[j]]));
 
-  //  dp[i]=f(b[deq[s]],a[i],dp[deq[s]]);
+    while(s<t && f(b[deq[s]],a[i],dp[deq[s]])>=f(b[deq[s+1]],a[i],dp[deq[s+1]])) s++;
+
+    dp[i]=f(b[deq[s]],a[i],dp[deq[s]]);
+   // printf("i:%lld, dp[i]:%lld, %lld %lld\n",i,dp[i],deq[s],deq[t]);
+  //  printf("s:%lld, t:%lld\n",(dp[i]-dp[deq[t-1]])*(b[deq[t]]-b[i]),(dp[i]-dp[deq[t]])*(b[deq[t-1]]-b[i]));
+
     while(s+1<=t &&
-          (dp[deq[t]]-dp[i])*(b[i]-b[deq[t-1]])
-          <= (dp[deq[t-1]]-dp[i])*(b[i]-b[deq[t]])) t--;
+          (double)(dp[deq[t-2]]-dp[deq[t-1]])/(b[deq[t-1]]-b[deq[t-2]])
+          >=(double)(dp[i]-dp[deq[t]])/(b[deq[t]]-b[i])) t--;
     deq[++t]=i;
   }
   printf("%lld",dp[n]);
 }
 int main(){
   solve();
+  return 0;
 }
