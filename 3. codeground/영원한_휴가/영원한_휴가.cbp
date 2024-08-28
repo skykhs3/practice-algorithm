@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="더도_말고_덜도_말고" />
+		<Option title="영원한_휴가" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/더도_말고_덜도_말고" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/영원한_휴가" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -16,7 +16,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/더도_말고_덜도_말고" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/영원한_휴가" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -34,6 +34,8 @@
 		</Compiler>
 		<Unit filename="input.txt" />
 		<Unit filename="main.cpp" />
-		<Extensions />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
