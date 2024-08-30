@@ -2,7 +2,7 @@
 using namespace std;
 typedef long long ll;
 struct vector2{
-  int x,y;
+  ll x,y;
   vector2(int _x=0,int _y=0): x(_x),y(_y){};
   bool operator <(const vector2 &rig)const{
      return y==rig.y ? x<rig.x : y<rig.y;
@@ -22,10 +22,6 @@ struct vector2{
 };
 
 vector2 standard(0,0);
-
-vector<vector2> points;
-vector<vector2> st;
-vector<vector2> toNext;
 
 ll crossProduct(const vector2 &v0,const vector2 &v1,const vector2 &v2){
   return (v1.x-v0.x)*(v2.y-v0.y)-(v2.x-v0.x)*(v1.y-v0.y);
@@ -50,52 +46,46 @@ bool clockWise(const vector2 &v0,const vector2 &v1,const vector2 &v2){
 }
 
 void diameter(vector<vector2> &p){
-  int n=p.size();
-  int lef=min_element(p.begin(),p.end())-p.begin();
-  int rig=max_element(p.begin(),p.end())-p.begin();
+  ll n=p.size(),lef=0,rig=0;
+  vector<vector2> toNext(n);
 
-  vector2 calipersA(0,1);
+  for(ll i=0;i<n;i++){
+    if(p[i]<p[lef]) lef=i;
+    if(p[rig]<p[i]) rig=i;
+  }
+
+  vector<ll> ans={lef,rig};
   ll ret=(p[rig]-p[lef]).normSquare();
-  vector<int> ans={lef,rig};
 
-  toNext.resize(n);
-  for(int i=0;i<n;i++)
+  for(ll i=0;i<n;i++)
     toNext[i]=(p[(i+1)%n]-p[i]);
 
-  int a=lef, b=rig;
-  while(a!=rig || b!=lef){
-    ll dotA=calipersA.dot(toNext[a]);
-    ll dotB=-calipersA.dot(toNext[b]);
-    if(dotA*dotA*toNext[b].normSquare()>dotB*dotB*toNext[a].normSquare()){
-      calipersA=toNext[a];
-      a=(a+1)%n;
-    } else{
-      calipersA=-toNext[b];
-      b=(b+1)%n;
-    }
-    if(ret<(p[a]-p[b]).normSquare()){
-      ret=(p[a]-p[b]).normSquare();
-      ans={a,b};
+  for(ll k=0;k<p.size();k++){
+    if(crossProduct(vector2(0,0),toNext[lef],toNext[rig])>0) rig=(rig+1)%n;
+    else lef=(lef+1)%n;
+    if(ret<(p[lef]-p[rig]).normSquare()){
+      ans={lef,rig};
+      ret=(p[lef]-p[rig]).normSquare();
     }
   }
-  printf("%d %d %d %d\n",p[ans[0]].x,p[ans[0]].y,p[ans[1]].x,p[ans[1]].y);
+  printf("%lld %lld %lld %lld\n",p[ans[0]].x,p[ans[0]].y,p[ans[1]].x,p[ans[1]].y);
 }
 
 
 void solve(){
-  int n;
-  scanf("%d",&n);
-  points.resize(n);
-  for(int i=0;i<n;i++) scanf("%d%d",&points[i].x,&points[i].y);
+  ll n;
+  scanf("%lld",&n);
+  vector<vector2> points(n);
+  for(ll i=0;i<n;i++) scanf("%lld%lld",&points[i].x,&points[i].y);
 
   sort(points.begin(),points.end());
-
   standard=points[0];
   sort(points.begin()+1,points.end(),cmp2);
 
-  st.clear();
+  vector<vector2> st;
   st.push_back(points[0]);
-  for(int i=1;i<n;i++){
+
+  for(ll i=1;i<n;i++){
     while(st.size()>=2 && clockWise(st[st.size()-2],st[st.size()-1],points[i])) st.pop_back();
     st.push_back(points[i]);
   }
@@ -105,8 +95,8 @@ void solve(){
 
 int main(){
   freopen("input.txt","r",stdin);
-  int test;
-  scanf("%d",&test);
-  //for(ll i=1;i<=test;i++) solve();
+  ll test;
+  scanf("%lld",&test);
+  for(ll i=1;i<=test;i++) solve();
   return 0;
 }
