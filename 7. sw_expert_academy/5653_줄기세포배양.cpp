@@ -1,119 +1,83 @@
+// 모든 맵의 격자를 보면 안되고 각 세포를 봐야 시간 초과가 안난다.
 #include <stdio.h>
 #include <vector>
-#include <map>
-#include <set>
+#define S 151
 #include <queue>
-#include <iostream>
-#include <algorithm>
-#include <utility>
-typedef long long ll;
 using namespace std;
+
+typedef long long ll;
 
 struct Cell
 {
-  ll time;
-  ll life;
+  ll life = 0, time = 0, y, x;
 };
 
 int dy[4] = {0, 1, 0, -1};
 int dx[4] = {1, 0, -1, 0};
 
-map<pair<ll, ll>, Cell> cell;
-map<pair<ll, ll>, ll> create;
 ll solve()
 {
-  ll n, m, endOfTime;
-  scanf("%lld%lld%lld", &n, &m, &endOfTime);
-  vector<vector<ll>> a(n + 1, vector<ll>(m + 1));
-  cell.clear();
-  create.clear();
-
-  queue<ll> A;
-  priority_queue<pair<long long, pair<long long, long long>>> B;
+  ll n, m, k;
+  scanf("%lld%lld%lld", &n, &m, &k);
+  vector<Cell> cells;
+  ll map[350][350] = {};
 
   for (ll i = 1; i <= n; i++)
+  {
     for (ll j = 1; j <= m; j++)
     {
-      scanf("%lld", &a[i][j]);
-      if (a[i][j] != 0)
-      {
-        cell[make_pair(i, j)] = {a[i][j], a[i][j]};
-        create[{i, j}] = 0;
-        A.push(i);
-        A.push(j);
-      }
-    }
-
-  for (ll currentTime = 1; currentTime <= endOfTime; currentTime++)
-  {
-
-    for (ll q = A.size() / 2; q >= 1; q--)
-    {
-      ll y = A.front();
-      A.pop();
-      ll x = A.front();
-      A.pop();
-      auto &ce = cell[{y, x}];
-      if (ce.time-- == 0)
-      {
-        B.push({ce.life, {y, x}});
-      }
-      else
-      {
-        A.push(y);
-        A.push(x);
-      }
-    }
-
-    //printf("%lld\n", currentTime);
-    while (!B.empty())
-    {
-      ll y = B.top().second.first;
-      ll x = B.top().second.second;
-      B.pop();
-     // printf("->%lld %lld\n", y, x);
-      auto ce = cell[{y, x}];
-      for (ll k = 0; k < 4; k++)
-      {
-        ll ty = y + dy[k];
-        ll tx = x + dx[k];
-        if (cell.find({ty, tx}) == cell.end())
-        {
-          cell[{ty, tx}] = {ce.life, ce.life};
-          create[{ty, tx}] = currentTime;
-         // printf("%lld %lld\n", ty, tx);
-          A.push(ty);
-          A.push(tx);
-        }
-      }
-    }
-
-    if (currentTime == endOfTime)
-    {
-      ll ans = 0;
-      for (auto it : cell)
-      {
-        ll life = it.second.life;
-        ll time = it.second.time;
-        ll record = create[{it.first.first, it.first.second}];
-        // printf("%lld %lld %lld\n",it.first.first,it.first.second, record);
-        if (currentTime >= record && record + 2 * life - 1 >= currentTime)
-          ans++;
-      }
-      return ans;
+      ll x;
+      scanf("%lld", &x);
+      cells.push_back({x, x, i + 150, j + 150});
+      map[i + 150][j + 150] = x;
     }
   }
 
-  return 0;
-}
+  priority_queue<pair<ll, ll>> activate;
 
+  for (ll t = 1; t <= k; t++)
+  {
+
+    for (ll i = cells.size() - 1; i >= 0; i--)
+    {
+      cells[i].time--;
+
+      if (cells[i].time == 0)
+      {
+        activate.push({cells[i].life, i});
+      }
+    }
+
+    while (!activate.empty())
+    {
+      auto it = activate.top();
+      activate.pop();
+      auto v = it.second;
+
+      for (ll dir = 0; dir < 4; dir++)
+      {
+        ll ty = cells[v].y + dy[dir];
+        ll tx = cells[v].x + dx[dir];
+        if (!(0 <= ty && ty < 350 && 0 <= tx && tx < 350 && map[ty][tx] == 0))
+          continue;
+        map[ty][tx] = cells[v].life;
+        cells.push_back({cells[v].life, cells[v].life + 1, ty, tx});
+      }
+    }
+  }
+  ll ans=0;
+  for(auto cell:cells){
+    if(cell.time>-cell.life && cell.time<=cell.life)
+      ans++;
+  }
+  return ans;
+}
 int main()
 {
-  ll test;
-  scanf("%lld", &test);
-  for (ll i = 1; i <= test; i++)
+  ll t;
+  scanf("%lld", &t);
+  for (ll i = 1; i <= t; i++)
   {
     printf("#%lld %lld\n", i, solve());
   }
-  return 0;
 }
