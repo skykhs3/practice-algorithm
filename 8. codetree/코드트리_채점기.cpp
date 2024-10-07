@@ -1,32 +1,30 @@
+// unordered_map 사용법 알기.
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
+typedef int ll;
 struct Problem{
   ll priority;
   ll time;
   string url;
-  string domain;
   bool operator < (const Problem &r) const{
     return priority>r.priority || (priority==r.priority &&  time>r.time);
   }
 };
 ll n;
-ll oo=987654321987LL;
+ll oo=987654321;
 
-set<string> url;
-map<string,priority_queue<Problem>> Q;
+unordered_set<string> url;
+unordered_map<string,priority_queue<Problem>> Q;
 
-map<string,ll> startTime;
-map<string,ll> endTime;
+unordered_map<string,ll> startTime;
+unordered_map<string,ll> endTime;
 
 priority_queue<ll,vector<ll>,greater<ll>> solver;
 vector<string> solverState(50001);
 
+
 string makeP(string u0){
-  ll i;
-  for(i=0;i<u0.size();i++){
-    if(u0[i]=='/') break;
-  }
+  int i=u0.find('/');
   return u0.substr(0,i);
 }
 void ord100(){
@@ -35,7 +33,7 @@ void ord100(){
   string domain=makeP(u0);
   if(url.find(u0)==url.end()){
     url.insert(u0);
-    Q[domain].push({1,0,u0,domain});
+    Q[domain].push({1,0,u0});
   }
   for(ll i=1;i<=n;i++) solver.push(i);
 }
@@ -47,7 +45,7 @@ void ord200(){
 
   if(url.find(u)==url.end()){
     url.insert(u);
-    Q[domain].push({p,t,u,domain});
+    Q[domain].push({p,t,u});
   }
 }
 void ord300(){
@@ -55,14 +53,16 @@ void ord300(){
   cin>>t;
   string v="-";
   Problem mx;
+  if(solver.empty()) return;
+
   for(auto &it:Q){
     string domain=it.first;
-    auto &que=it.second;
     ll start=startTime[domain];
     ll end=endTime[domain];
     ll gap=end-start;
-   // cout<<domain<<endl;
-    if((end==0 || (t>=start+3*gap)) && !que.empty()){
+    if(end==oo || !(end==0 || (t>=start+3*gap))) continue;
+    auto &que=it.second;
+    if(!que.empty()){
       Problem top=que.top();
       if(v=="-" || mx<top){
         mx=top;
@@ -70,17 +70,16 @@ void ord300(){
       }
     }
   }
-  //cout<<"---"<<endl;
 
-  if(v!="-" && !solver.empty()){
+  if(v!="-"){
     ll index=solver.top();solver.pop();
     startTime[v]=t;
     endTime[v]=oo;
     solverState[index]=v;
 
-    url.erase(Q[v].top().url);
-    Q[v].pop();
-    
+    auto &que=Q[v];
+    url.erase(que.top().url);
+    que.pop();
   }
 }
 void ord400(){
@@ -95,10 +94,11 @@ void ord400(){
 void ord500(){
   ll t;
   cin>> t;
-
   cout<<url.size()<<endl;
 }
 int main(){
+  ios::sync_with_stdio(false);
+  cin.tie(NULL);
   ll q;
   cin>>q;
   for(ll qq=1;qq<=q;qq++){
