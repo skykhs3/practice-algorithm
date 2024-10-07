@@ -1,6 +1,10 @@
 {
   "files.associations": {
     "queue": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "iostream": "cpp",
+    "set": "cpp",
+    "string": "cpp",
+    "string_view": "cpp"
   }
 }
