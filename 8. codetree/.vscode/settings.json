@@ -11,6 +11,9 @@
     "regex": "cpp",
     "stack": "cpp",
     "compare": "cpp",
-    "functional": "cpp"
+    "functional": "cpp",
+    "iosfwd": "cpp",
+    "complex": "cpp",
+    "valarray": "cpp"
   }
 }

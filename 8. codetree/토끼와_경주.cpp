@@ -1,3 +1,4 @@
+// long long 범위 조심.
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -21,7 +22,7 @@ vector<ll> preN(200002),preM(200002);
 vector<Rabbit> rabbits(2001);
 
 priority_queue<Rabbit> Q;
-int totalScore=0;
+ll totalScore=0;
 map<ll,ll> score;
 map<ll,ll> d;
 
@@ -108,14 +109,12 @@ int main(){
         
         auto rabbit=Q.top();Q.pop();
         vector<pair<ll,ll>> temp;
-        int di=d[rabbit.pid];
+        ll di=d[rabbit.pid];
         
         for(int dir=0;dir<4;dir++){
           pair<ll,ll> pp=moveRabbit(rabbit.r,rabbit.c,dir,di);
           temp.push_back(pp);
         }
-
-        
      
         sort(temp.begin(),temp.end(),cmp);
         
@@ -141,7 +140,7 @@ int main(){
       score[beforeSort.back().pid]+=s;
 
     } else if(ord==300){
-      int pid,l;
+      ll pid,l;
       cin>>pid>>l;
       d[pid]*=l;
     } else if(ord==400){
