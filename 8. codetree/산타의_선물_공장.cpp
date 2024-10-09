@@ -17,7 +17,7 @@ void o100(){
   // m 벨트
   //설립
   beltParent.resize(m+1);
-  for(int i=1;i<=m;i++) beltParent[i]=i;
+  for(ll i=1;i<=m;i++) beltParent[i]=i;
 
   boxes.resize(n+2*m+1);
 
@@ -54,10 +54,13 @@ void o200(ll w_max){
         if(x3<n+m+1){
           ll x5=n+m+i,x4;
           x4=boxes[x5].bef;
+
           boxes[x1].aft=x3;
           boxes[x3].bef=x1;
+
           boxes[x4].aft=x2;
           boxes[x2].bef=x4;
+
           boxes[x2].aft=x5;
           boxes[x5].bef=x2;
         }
@@ -66,12 +69,12 @@ void o200(ll w_max){
   }
   cout<<ans<<endl;
 }
-int getBeltId(int v){
+ll getBeltId(ll v){
   if(v==beltParent[v]) return v;
-  return beltParent[v];
+  return getBeltId(beltParent[v]);
 }
-void o300(int r_id){
-  int idx=mapping[r_id]; // 항상 존재?
+void o300(ll r_id){
+  ll idx=mapping[r_id]; // 항상 존재?
   if(idx==0){
     cout<<-1<<endl;
     return;
@@ -80,7 +83,7 @@ void o300(int r_id){
   if(boxes[idx].beltId==-1){
     cout<<-1<<endl;
   }else{
-    int x1,x2,x3;
+    ll x1,x2,x3;
     x2=idx;
     x1=boxes[x2].bef;
     x3=boxes[x2].aft;
@@ -92,8 +95,8 @@ void o300(int r_id){
     boxes[x2].beltId=-1;
   }
 }
-void o400(int f_id){
-  int idx=mapping[f_id];
+void o400(ll f_id){
+  ll idx=mapping[f_id];
   if(idx==0){
     cout<<-1<<endl;
     return;
@@ -101,10 +104,10 @@ void o400(int f_id){
   if(boxes[idx].beltId==-1){
     cout<<-1<<endl;
   } else{
-    int x4=idx;
-    int x3=boxes[idx].bef;
-    int x1,x2,x5,x6;
-    if(x3<n+1){
+    ll x4=idx;
+    ll x3=boxes[idx].bef;
+    ll x1,x2,x5,x6;
+    if(x3<=n){
       x1=n+getBeltId(boxes[idx].beltId);
       x6=n+m+getBeltId(boxes[idx].beltId);
       x2=boxes[x1].aft;
@@ -120,12 +123,12 @@ void o400(int f_id){
     cout<<getBeltId(boxes[idx].beltId)<<endl;
   }
 }
-void o500(int b_num){
+void o500(ll b_num){
   if(beltParent[b_num]==b_num){
-    for(int i=1;i<=m;i++){
-      int next_bm=(b_num+i-1)%m+1;
+    for(ll i=1;i<=m;i++){
+      ll next_bm=(b_num+i-1)%m+1;
       if(beltParent[next_bm]==next_bm){
-        int x1,x2,x3,x4,y1,y2;
+        ll x1,x2,x3,x4,y1,y2;
         x1=b_num+n;
         x4=b_num+n+m;
         x2=boxes[x1].aft;
@@ -177,15 +180,15 @@ void input(){
       cin>>w_max;
       o200(w_max);
     } else if(ord==300){
-      int r_id;
+      ll r_id;
       cin>>r_id;
       o300(r_id);
     } else if(ord==400){
-      int f_id;
+      ll f_id;
       cin>>f_id;
       o400(f_id);
     } else if(ord==500){
-      int b_num;
+      ll b_num;
       cin>>b_num;
       o500(b_num);
     }
