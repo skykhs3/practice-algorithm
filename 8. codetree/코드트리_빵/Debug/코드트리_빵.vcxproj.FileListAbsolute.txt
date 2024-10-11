@@ -1,0 +1,2 @@
+C:\Users\KimHyeonsu\Desktop\practice-algorithm\8. codetree\코드트리_빵\Debug\코드트리_빵.exe
+C:\Users\KimHyeonsu\Desktop\practice-algorithm\8. codetree\코드트리_빵\Debug\코드트리_빵.pdb
